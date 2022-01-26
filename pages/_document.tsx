@@ -31,7 +31,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <title>Nextjs Todo APP</title>
+          <meta name="title" content="Nextjs Todo App" />
           <link
             href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap"
             rel="stylesheet"
