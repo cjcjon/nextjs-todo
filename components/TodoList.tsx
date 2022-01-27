@@ -1,5 +1,5 @@
 import type { TodoType } from "../types/todo"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import styled from "styled-components"
 import palette from "../styles/palette"
 import { checkTodoAPI } from "../lib/api/todos"
@@ -11,18 +11,26 @@ interface Props {
 }
 
 export default function TodoList({ todos }: Props) {
+  const [localTodos, setLocalTodos] = useState(todos)
+
   const colorCountMap = useMemo(() => {
-    return todos
+    return localTodos
       .map((todo) => todo.color)
       .reduce((map, color) => {
         map.set(color, (map.get(color) ?? 0) + 1)
         return map
       }, new Map<string, number>())
-  }, [todos])
+  }, [localTodos])
 
   const checkTodo = async (id: number) => {
     try {
       await checkTodoAPI(id)
+
+      const newTodos = localTodos.map((todo) => {
+        return { ...todo, checked: todo.id === id ? !todo.checked : todo.checked }
+      })
+
+      setLocalTodos(newTodos)
     } catch (e) {
       console.log(e)
     }
@@ -32,7 +40,7 @@ export default function TodoList({ todos }: Props) {
     <Container>
       <div className="todo-list-header">
         <p className="todo-list-last-todo">
-          남은 TODO<span>{todos.length}개</span>
+          남은 TODO<span>{localTodos.length}개</span>
         </p>
         <div className="todo-list-header-colors">
           {Array.from(colorCountMap).map(([color, count]) => (
@@ -45,7 +53,7 @@ export default function TodoList({ todos }: Props) {
       </div>
 
       <ul className="todo-list">
-        {todos.map((todo) => (
+        {localTodos.map((todo) => (
           <li className="todo-item" key={todo.id}>
             <div className="todo-left-side">
               <div className={`todo-color-block bg-${todo.color}`} />
