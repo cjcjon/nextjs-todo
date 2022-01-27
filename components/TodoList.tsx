@@ -1,9 +1,10 @@
+import type { TodoType } from "../types/todo"
 import { useMemo } from "react"
 import styled from "styled-components"
 import palette from "../styles/palette"
+import { checkTodoAPI } from "../lib/api/todos"
 import TrashCanIcon from "../public/statics/svg/trash_can.svg"
 import CheckMarkIcon from "../public/statics/svg/check_mark.svg"
-import type { TodoType } from "../types/todo"
 
 interface Props {
   todos: TodoType[]
@@ -18,6 +19,14 @@ export default function TodoList({ todos }: Props) {
         return map
       }, new Map<string, number>())
   }, [todos])
+
+  const checkTodo = async (id: number) => {
+    try {
+      await checkTodoAPI(id)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   return (
     <Container>
@@ -46,10 +55,23 @@ export default function TodoList({ todos }: Props) {
               {todo.checked && (
                 <>
                   <TrashCanIcon className="todo-trash-can" onClick={() => {}} />
-                  <CheckMarkIcon className="todo-check-mark" onClick={() => {}} />
+                  <CheckMarkIcon
+                    className="todo-check-mark"
+                    onClick={() => {
+                      void checkTodo(todo.id)
+                    }}
+                  />
                 </>
               )}
-              {!todo.checked && <button type="button" className="todo-button" onClick={() => {}} />}
+              {!todo.checked && (
+                <button
+                  type="button"
+                  className="todo-button"
+                  onClick={() => {
+                    void checkTodo(todo.id)
+                  }}
+                />
+              )}
             </div>
           </li>
         ))}

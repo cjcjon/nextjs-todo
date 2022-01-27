@@ -1,6 +1,7 @@
-import TodoList from "../components/TodoList"
 import type { GetServerSideProps } from "next"
 import type { TodoType } from "../types/todo"
+import TodoList from "../components/TodoList"
+import { getTodosAPI } from "../lib/api/todos"
 
 interface Props {
   todos: TodoType[]
@@ -14,7 +15,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const todos: TodoType[] = []
 
   try {
-    const res = await fetch("http://localhost:3000/api/todos")
+    const res = await getTodosAPI()
+
     todos.push(...(await res.json()))
   } catch (e) {
     console.log(e)
