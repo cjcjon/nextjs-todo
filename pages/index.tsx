@@ -1,15 +1,24 @@
 import TodoList from "../components/TodoList"
-import { TodoType } from "../types/todo"
+import type { GetServerSideProps } from "next"
+import type { TodoType } from "../types/todo"
 
-export default function Index() {
+interface Props {
+  todos: TodoType[]
+}
+
+export default function Index({ todos }: Props) {
   return <TodoList todos={todos} />
 }
 
-const todos: TodoType[] = [
-  { id: 1, text: "마트 가서 장보기", color: "red", checked: false },
-  { id: 2, text: "수학 숙제하기", color: "orange", checked: false },
-  { id: 3, text: "코딩하기", color: "yellow", checked: true },
-  { id: 4, text: "넥스트 공부하기", color: "green", checked: true },
-  { id: 5, text: "요리 연습하기", color: "blue", checked: false },
-  { id: 6, text: "분리수거 하기", color: "navy", checked: false },
-]
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const todos: TodoType[] = []
+
+  try {
+    const res = await fetch("http://localhost:3000/api/todos")
+    todos.push(...(await res.json()))
+  } catch (e) {
+    console.log(e)
+  }
+
+  return { props: { todos: todos } }
+}
