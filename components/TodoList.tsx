@@ -2,7 +2,7 @@ import type { TodoType } from "../types/todo"
 import { useMemo, useState } from "react"
 import styled from "styled-components"
 import palette from "../styles/palette"
-import { checkTodoAPI } from "../lib/api/todos"
+import { checkTodoAPI, deleteTodoAPI } from "../lib/api/todos"
 import TrashCanIcon from "../public/statics/svg/trash_can.svg"
 import CheckMarkIcon from "../public/statics/svg/check_mark.svg"
 
@@ -36,6 +36,17 @@ export default function TodoList({ todos }: Props) {
     }
   }
 
+  const deleteTodo = async (id: number) => {
+    try {
+      await deleteTodoAPI(id)
+      const newTodos = localTodos.filter((todo) => todo.id !== id)
+      setLocalTodos(newTodos)
+      console.log("삭제했습니다")
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <Container>
       <div className="todo-list-header">
@@ -62,7 +73,12 @@ export default function TodoList({ todos }: Props) {
             <div className="todo-right-side">
               {todo.checked && (
                 <>
-                  <TrashCanIcon className="todo-trash-can" onClick={() => {}} />
+                  <TrashCanIcon
+                    className="todo-trash-can"
+                    onClick={() => {
+                      deleteTodo(todo.id)
+                    }}
+                  />
                   <CheckMarkIcon
                     className="todo-check-mark"
                     onClick={() => {

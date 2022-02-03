@@ -16,3 +16,6 @@ export const addTodoAPI = (body: AddTodoAPIBody) =>
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   })
+
+export const deleteTodoAPI = (id: number) =>
+  fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, { method: "DELETE" })
